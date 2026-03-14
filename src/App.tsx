@@ -1,28 +1,24 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import HomePage from './pages/home'; // Anh kiểm tra lại đường dẫn cho đúng với folder của anh nhé
+import HomePage from './pages/home'; 
 import Header from './components/common/Header';
 import Footer from './components/common/Footer';
-import { Box } from '@mui/material';
 
 function App() {
   return (
     <Router>
-      <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
-        {/* Header nằm ngoài Routes để trang nào cũng thấy */}
-        <Header />
+      {/* Header nằm ngoài Routes để trang nào cũng thấy */}
+      <Header />
 
-        <Box component="main" sx={{ flexGrow: 1 }}>
-          <Routes>
-            <Route path="/" element={<HomePage />} />
-            {/* Sau này anh thêm trang Login ở đây: 
-            <Route path="/login" element={<LoginPage />} /> 
-            */}
-          </Routes>
-        </Box>
+      <Routes>
+        <Route path="/" element={<HomePage />} />
+        {/*  thêm trang Login ở đây: 
+        <Route path="/login" element={<LoginPage />} /> 
+        */}
+      </Routes>
 
-        {/* Footer nằm ngoài Routes */}
+      {/* Footer nằm ngoài Routes */}
         <Footer />
-      </Box>
+      
     </Router>
   );
 }
