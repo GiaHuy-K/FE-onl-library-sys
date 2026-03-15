@@ -6,7 +6,7 @@ import {
   ArrowLeftOutlined,
 } from "@ant-design/icons";
 import { useNavigate, Link } from "react-router-dom";
-import { useAuth } from "../../config/Authcontext";
+import { useAuth } from "../../config/useAuth";
 import styles from "./LoginPage.module.css";
 import { toast } from "react-toastify";
 import api from "../../config/axios";
@@ -51,6 +51,7 @@ const LoginPage: React.FC = () => {
       } else {
         navigate("/"); // Student hoặc Lecturer về trang chủ
       }
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       console.error("Login Error:", error);
       // Xử lý lỗi từ BE trả về

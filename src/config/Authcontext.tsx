@@ -1,6 +1,8 @@
-import React, { createContext, useState, useContext, useEffect,  } from "react";
-import { ReactNode } from "react";
-// 1. Định nghĩa kiểu dữ liệu User theo 5 Actor
+import React, { createContext, useState, useEffect } from "react";
+import type { ReactNode } from "react";
+
+
+// 1. Định nghĩa kiểu dữ liệu User theo 5 Actor của hệ thống
 interface User {
   fullName: string;
   role: 'ADMIN' | 'STAFF' | 'STUDENT' | 'LECTURER' | string;
@@ -15,14 +17,16 @@ interface AuthContextType {
   logout: () => void;
 }
 
-const AuthContext = createContext<AuthContextType | null>(null);
+// 2. Khai báo và EXPORT Context để file useAuth.ts có thể sử dụng
+// eslint-disable-next-line react-refresh/only-export-components
+export const AuthContext = createContext<AuthContextType | null>(null);
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
-  // Kiểm tra trạng thái đăng nhập khi vừa load web (F5)
+  // Kiểm tra trạng thái đăng nhập khi load lại trang (F5)
   useEffect(() => {
     const checkLocalAuth = () => {
       const token = localStorage.getItem("token");
@@ -42,7 +46,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     checkLocalAuth();
   }, []);
 
-  // Hàm Login: Nhận data từ LoginPage và lưu vào máy
+  // Hàm Login: Lưu data vào localStorage và cập nhật State
   const login = (userData: User, token: string) => {
     localStorage.setItem("token", token);
     localStorage.setItem("userRole", userData.role);
@@ -52,33 +56,31 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     setIsAuthenticated(true);
   };
 
-  // Hàm Logout: Xóa data và chuyển về trang Login
+  // Hàm Logout: Xóa sạch dấu vết và đẩy về trang Login
   const logout = () => {
+    localStorage.clear(); // Xóa hết token, role, fullname
     setUser(null);
     setIsAuthenticated(false);
-    localStorage.clear();
     window.location.href = "/login";
   };
 
   return (
     <AuthContext.Provider value={{ user, isAuthenticated, isLoading, login, logout }}>
-      {!isLoading ? children : (
+      {!isLoading ? (
+        children
+      ) : (
         <div style={{ 
-          display: 'flex', justifyContent: 'center', alignItems: 'center', 
-          height: '100vh', color: '#FF6E61', fontWeight: 700 
+          display: 'flex', 
+          justifyContent: 'center', 
+          alignItems: 'center', 
+          height: '100vh', 
+          color: '#FF6E61',
+          fontWeight: 700,
+          backgroundColor: '#f8f9fa'
         }}>
           ĐANG KHỞI TẠO LIB-SYS...
         </div>
       )}
     </AuthContext.Provider>
   );
-};
-
-
-export const useAuth = () => {
-  const context = useContext(AuthContext);
-  if (!context) {
-    throw new Error("useAuth phải được sử dụng trong AuthProvider");
-  }
-  return context;
 };

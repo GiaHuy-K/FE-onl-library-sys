@@ -7,7 +7,8 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 // Auth & Context
-import { AuthProvider, useAuth } from "../src/config/Authcontext";
+import { AuthProvider } from "../src/config/Authcontext";
+
 
 // Layouts
 // import AdminLayout from "./components/layouts/adminLayout";
