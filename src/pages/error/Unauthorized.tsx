@@ -19,10 +19,11 @@ const Unauthorized: React.FC = () => {
         title={<span style={{ color: '#FF6E61', fontWeight: 800, fontSize: '2rem' }}>403</span>}
         subTitle={
           <div style={{ fontSize: '1.1rem', color: '#555' }}>
-            <p>Rất tiếc, bạn không có quyền truy cập vào khu vực này.</p>
             <p style={{ fontStyle: 'italic', fontSize: '0.9rem' }}>
-              "Mỗi cuốn sách có một vị trí, và mỗi độc giả cũng vậy."
+              "Trăm vạn hạt mưa rơi, không hạt nào rơi nhầm chỗ."
             </p>
+            <p>Rất tiếc, bạn không có quyền truy cập vào khu vực này.</p>
+            
           </div>
         }
         extra={
