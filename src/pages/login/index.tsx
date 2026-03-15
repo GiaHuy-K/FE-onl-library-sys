@@ -10,11 +10,12 @@ import { useAuth } from "../../config/useAuth";
 import styles from "./LoginPage.module.css";
 import { toast } from "react-toastify";
 import api from "../../config/axios";
+import { jwtDecode } from "jwt-decode"; 
 
 const { Title, Text } = Typography;
 
 interface LoginFormValues {
-  email: string;
+  input: string; 
   password: string;
   remember?: boolean;
 }
@@ -26,37 +27,55 @@ const LoginPage: React.FC = () => {
 
   const onFinish = async (values: LoginFormValues) => {
     setLoading(true);
+    console.log(">>> Dữ liệu gửi đi (Payload):", values);
+    localStorage.clear(); // Xóa dữ liệu cũ trước khi lưu mới
     try {
-      // 1. Gọi API thực tế từ Backend
-      // Endpoint thường là /auth/login hoặc /login tùy BE của anh
+      // 1. Gọi API thực tế
       const response = await api.post("/auth/login", {
-        email: values.email,
+        input: values.input,
         password: values.password,
       });
 
-      // 2. Lấy dữ liệu trả về từ BE
-      // Cấu trúc thông thường: { token: "...", user: { fullName: "...", role: "..." } }
-      const { token, user } = response.data;
+      console.log(">>> Response từ Backend:", response.data);
+      const { token } = response.data;
 
-      // 3. Gọi hàm login từ AuthContext để lưu vào LocalStorage và State
-      login(user, token);
-
-      toast.success(`Chào mừng ${user.fullName} quay trở lại!`);
-
-      // 4. Điều hướng dựa trên Role thực tế trả về từ DB
-      if (user.role === "ADMIN") {
-        navigate("/dashboard/overview");
-      } else if (user.role === "STAFF") {
-        navigate("/dashboardNurse/dashboardN"); // Hoặc dashboard cho Staff thư viện
-      } else {
-        navigate("/"); // Student hoặc Lecturer về trang chủ
+      if (!token) {
+        throw new Error("Không nhận được Token từ server!");
       }
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
+      // 2. Giải mã JWT để lấy thông tin User
+      const decoded: any = jwtDecode(token);
+      console.log(">>> Dữ liệu giải mã từ JWT (Decoded):", decoded);
+
+       
+      // - 'scope' chứa Role (ADMIN)
+      // - 'sub' chứa User ID
+      const user = {
+        id: decoded.sub,
+        role: decoded.scope || "USER", 
+      };
+
+      console.log(">>> Object User sau khi xử lý:", user);
+
+      // 3. Lưu vào AuthContext / LocalStorage
+      login(user, token); 
+
+      toast.success(`Đăng nhập thành công với quyền ${user.role}!`);
+
+      // 4. Điều hướng dựa trên 'scope' (ADMIN)
+      if (user.role === "ADMIN") {
+        console.log(">>> Hướng người dùng tới: Dashboard");
+        navigate("/dashboard");
+      } else {
+        console.log(">>> Hướng người dùng tới: Home");
+        navigate("/");
+      }
+
     } catch (error: any) {
-      console.error("Login Error:", error);
-      // Xử lý lỗi từ BE trả về
+      console.error(">>> Lỗi đăng nhập cụ thể:", error);
+      
       const message =
-        error.response?.data?.message || "Email hoặc mật khẩu không chính xác!";
+        error.response?.data?.message || "Thông tin đăng nhập không chính xác!";
       toast.error(message);
     } finally {
       setLoading(false);
@@ -78,7 +97,6 @@ const LoginPage: React.FC = () => {
         </div>
       </div>
 
-      {/* Phần bên phải: Form đăng nhập */}
       <div className={styles.rightSide}>
         <Card className={styles.loginCard}>
           <div className={styles.headerSection}>
@@ -98,13 +116,12 @@ const LoginPage: React.FC = () => {
             size="large"
           >
             <Form.Item
-              name="email"
+              name="input"
               rules={[
-                { required: true, message: "Vui lòng nhập Email!" },
-                { type: "email", message: "Email không hợp lệ!" },
+                { required: true, message: "Vui lòng nhập Email hoặc Tên đăng nhập!" },
               ]}
             >
-              <Input prefix={<MailOutlined />} placeholder="Email" />
+              <Input prefix={<MailOutlined />} placeholder="Email / Username" />
             </Form.Item>
 
             <Form.Item
@@ -122,9 +139,6 @@ const LoginPage: React.FC = () => {
                 <Form.Item name="remember" valuePropName="checked" noStyle>
                   <Checkbox>Ghi nhớ tôi</Checkbox>
                 </Form.Item>
-                {/* <Link to="/forgot-password" className={styles.forgotPassword}>
-                  Quên mật khẩu?
-                </Link> */}
               </div>
             </Form.Item>
 
@@ -141,14 +155,6 @@ const LoginPage: React.FC = () => {
             </Form.Item>
 
             <div className={styles.footerSection}>
-              <Text type="secondary">
-                Chưa có tài khoản?{" "}
-                <Link to="/register" className={styles.registerLink}>
-                  Đăng ký ngay
-                </Link>
-              </Text>
-
-              
               <div className={styles.backHomeContainer}>
                 <Link to="/" className={styles.backHomeLink}>
                   <ArrowLeftOutlined /> Quay lại trang chủ

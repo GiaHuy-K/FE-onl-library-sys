@@ -3,7 +3,7 @@ import type { InternalAxiosRequestConfig } from "axios";
 
 // Tạo instance với kiểu dữ liệu AxiosInstance tự động
 const api = axios.create({
-  baseURL: "http://api.awsread.id.vn/api/",
+  baseURL: "https://api.awsread.id.vn/api/v1",
 });
 
 /**
@@ -28,7 +28,7 @@ api.interceptors.request.use(
 );
 
 /**
- * (Tùy chọn) Anh có thể thêm bộ chặn cho Response để xử lý lỗi 401 (hết hạn token) toàn cục
+ * (Tùy chọn)  có thể thêm bộ chặn cho Response để xử lý lỗi 401 (hết hạn token) toàn cục
  */
 api.interceptors.response.use(
   (response) => response,

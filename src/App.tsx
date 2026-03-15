@@ -1,50 +1,54 @@
-import {
-  createBrowserRouter,
-  RouterProvider,
-} from "react-router-dom";
+import { createBrowserRouter, RouterProvider, Navigate } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 // Auth & Context
-import { AuthProvider } from "../src/config/Authcontext";
+import { AuthProvider } from "./config/Authcontext";
+import ProtectedRoute from "./routes/ProtectedRoute"; // Import cái bảo vệ
 
-
-// Layouts
-// import AdminLayout from "./components/layouts/adminLayout";
-// import StaffLayout from "./components/layouts/staffLayout"; 
-
-// Pages 
+// Layouts & Pages
+import AdminLayout from "./components/layouts/AdminLayout/AdminLayout";
 import LoginPage from "./pages/login";
 import HomePage from "./pages/home";
 import Unauthorized from "./pages/error/Unauthorized";
-// ... Import các trang quản lý sách, sinh viên ở đây
-
-// --- CÁC BỘ LỌC BẢO VỆ ROUTE ---
-
-// const PrivateRoute = ({ children }) => {
-//   const { isAuthenticated, isLoading } = useAuth();
-//   if (isLoading) return null;
-//   return isAuthenticated ? children : <Navigate to="/login" replace />;
-// };
-
-
-// --- CẤU HÌNH ROUTER ---
+import AccountManager from "./pages/Admin/AccountManager"; 
 
 const router = createBrowserRouter([
-  // Public Routes
+  // --- Public Routes ---
   { path: "/", element: <HomePage /> },
   { path: "/login", element: <LoginPage /> },
   { path: "/unauthorized", element: <Unauthorized /> },
-  // { path: "/forgot-password", element: <div>Trang quên mật khẩu</div> },
 
-  // Dashboard của STAFF (Nhân viên thư viện - Quản lý sách/mượn trả)
-  
+  // --- Dashboard của ADMIN (Bảo vệ nghiêm ngặt) ---
+  {
+    element: <ProtectedRoute allowedRoles={["ADMIN"]} />, 
+    children: [
+      {
+        path: "/dashboard",
+        element: <AdminLayout />,
+        children: [
+          { path: "overview", element: <div>Trang tổng quan Admin</div> },
+          { path: "STUDENT", element: <AccountManager /> },
+          { path: "LECTURER", element: <AccountManager /> },
+          { path: "STAFF", element: <AccountManager /> },
+        ],
+      },
+    ],
+  },
 
-  // Dashboard của ADMIN (Quản trị viên - Quản lý tài khoản/hệ thống)
-  
+  // --- Dashboard cho STAFF  ---
+  {
+    element: <ProtectedRoute allowedRoles={["STAFF"]} />,
+    children: [
+      {
+        path: "/staff",
+        element: <div>Trang của Staff</div>,
+      },
+    ],
+  },
 
-  // Trang cá nhân (Dùng chung cho Student/Lecturer/Staff/Admin)
-  
+  // Bẫy lỗi 404 - Nếu gõ bậy bạ thì về trang chủ hoặc Unauthorized
+  { path: "*", element: <Navigate to="/" replace /> }
 ]);
 
 export default function App() {

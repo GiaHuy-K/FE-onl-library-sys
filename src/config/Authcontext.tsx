@@ -1,10 +1,10 @@
 import { createContext, useState, useEffect } from "react";
 import type { ReactNode } from "react";
 
-
-// 1. Định nghĩa kiểu dữ liệu User theo 5 Actor của hệ thống
+// 1. Định nghĩa kiểu dữ liệu User
 interface User {
-  fullName: string;
+  id?: string; // Thêm id từ trường 'sub' trong token
+  fullName?: string; // Thêm dấu '?' để không bắt buộc phải có tên
   role: 'ADMIN' | 'STAFF' | 'STUDENT' | 'LECTURER' | string;
   email?: string;
 }
@@ -17,7 +17,7 @@ interface AuthContextType {
   logout: () => void;
 }
 
-// 2. Khai báo và EXPORT Context để file useAuth.ts có thể sử dụng
+// 2. Khai báo Context
 // eslint-disable-next-line react-refresh/only-export-components
 export const AuthContext = createContext<AuthContextType | null>(null);
 
@@ -32,11 +32,14 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       const token = localStorage.getItem("token");
       const savedRole = localStorage.getItem("userRole");
       const savedFullName = localStorage.getItem("userFullname");
+      const savedId = localStorage.getItem("userId");
 
-      if (token && savedRole && savedFullName) {
+      // Chỉ cần có token và role là đủ để duy trì phiên đăng nhập
+      if (token && savedRole) {
         setUser({
+          id: savedId || "",
           role: savedRole,
-          fullName: savedFullName,
+          fullName: savedFullName || "",
         });
         setIsAuthenticated(true);
       }
@@ -50,7 +53,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const login = (userData: User, token: string) => {
     localStorage.setItem("token", token);
     localStorage.setItem("userRole", userData.role);
-    localStorage.setItem("userFullname", userData.fullName);
+    localStorage.setItem("userFullname", userData.fullName || "");
+    localStorage.setItem("userId", userData.id || "");
     
     setUser(userData);
     setIsAuthenticated(true);
@@ -58,7 +62,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   // Hàm Logout: Xóa sạch dấu vết và đẩy về trang Login
   const logout = () => {
-    localStorage.clear(); // Xóa hết token, role, fullname
+    localStorage.clear(); 
     setUser(null);
     setIsAuthenticated(false);
     window.location.href = "/login";
