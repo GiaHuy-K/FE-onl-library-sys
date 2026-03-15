@@ -1,0 +1,127 @@
+.loginWrapper {
+  display: flex;
+  min-height: 100vh;
+  background-color: #fff;
+}
+
+/* Phần bên trái chứa ảnh hoặc trang trí */
+.leftSide {
+  flex: 1.2;
+  background: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), 
+              url('https://images.unsplash.com/photo-1507842217343-583bb7270b66?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80'); /* Ảnh thư viện */
+  background-size: cover;
+  background-position: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  padding: 40px;
+  text-align: center;
+}
+
+.leftSide h1 {
+  font-size: 3rem;
+  font-weight: 800;
+  margin-bottom: 20px;
+  text-shadow: 2px 2px 10px rgba(0,0,0,0.5);
+}
+
+.leftSide p {
+  font-size: 1.2rem;
+  font-style: italic;
+  max-width: 500px;
+}
+
+/* Nửa bên phải: Theme Cam - Trắng */
+.rightSide {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #ffffff; /* Trắng tinh khôi */
+}
+
+.brandTitle {
+  color: #FF6E61 !important; /* Màu cam chủ đạo */
+  font-weight: 800 !important;
+  font-size: 2.5rem !important;
+  letter-spacing: 1px;
+}
+
+/* Tùy chỉnh nút Đăng nhập màu Cam */
+.loginButton {
+  background-color: #FF6E61 !important;
+  border-color: #FF6E61 !important;
+  height: 50px !important;
+  border-radius: 8px !important;
+  font-weight: 700 !important;
+  font-size: 16px !important;
+  box-shadow: 0 4px 12px rgba(255, 110, 97, 0.3);
+  transition: all 0.3s ease !important;
+}
+
+.loginButton:hover {
+  background-color: #e56356 !important;
+  border-color: #e56356 !important;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 15px rgba(255, 110, 97, 0.4);
+}
+
+/* Các link chữ màu Cam */
+.registerLink, .forgotPassword {
+  color: #FF6E61 !important;
+  font-weight: 600;
+  transition: color 0.3s ease;
+}
+
+.registerLink:hover, .forgotPassword:hover {
+  color: #e56356 !important;
+  text-decoration: underline;
+}
+
+/* Tùy chỉnh Checkbox màu cam */
+:global(.ant-checkbox-checked .ant-checkbox-inner) {
+  background-color: #FF6E61 !important;
+  border-color: #FF6E61 !important;
+}
+
+/* Màu viền khi focus vào ô Input */
+:global(.ant-input-affix-wrapper-focused), 
+:global(.ant-input-focused) {
+  border-color: #FF6E61 !important;
+  box-shadow: 0 0 0 2px rgba(255, 110, 97, 0.1) !important;
+}
+
+.loginCard {
+  width: 100%;
+  max-width: 420px;
+  border: none !important;
+  box-shadow: none !important; /* Bỏ shadow nếu dùng nền xám nhẹ */
+  background: transparent !important;
+}
+.footerSection {
+  text-align: center;
+  margin-top: 24px;
+}
+
+/* Container chứa nút Quay lại trang chủ */
+.backHomeContainer {
+  margin-top: 20px;
+  padding-top: 15px;
+  border-top: 1px dashed #f0f0f0; /* Tạo đường kẻ đứt quãng nhẹ nhàng */
+}
+
+.backHomeLink {
+  color: #8c8c8c !important; /* Màu xám trầm, không tranh giành với nút chính */
+  font-size: 14px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px; /* Khoảng cách giữa icon và chữ */
+  transition: all 0.3s ease;
+}
+
+.backHomeLink:hover {
+  color: #FF6E61 !important; /* Rê chuột vào mới hiện màu cam thương hiệu */
+  transform: translateX(-3px); /* Hiệu ứng nhích nhẹ sang trái */
+}

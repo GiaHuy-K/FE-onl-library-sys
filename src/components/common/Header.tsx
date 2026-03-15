@@ -1,7 +1,12 @@
 import { AppBar, Toolbar, Typography, Button, Container, Stack, Box, TextField, Paper, IconButton } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
-
+import { useNavigate } from 'react-router-dom';
 const Header = () => {
+  const navigate = useNavigate();
+
+  const handleLogin = () => {
+    navigate("/login");
+  };
   return (
     <AppBar position="static" sx={{ backgroundColor: '#FF6E61', py: 0.5, elevation: 0 }}>
       <Container maxWidth="lg">
@@ -28,7 +33,7 @@ const Header = () => {
             </Paper>
           </Box>
 
-          <Button sx={{ color: '#fff', textTransform: 'none', fontWeight: 600 }}>đăng nhập</Button>
+          <Button onClick={handleLogin} sx={{ color: '#fff', textTransform: 'none', fontWeight: 600 }}>Đăng nhập</Button>
         </Toolbar>
       </Container>
     </AppBar>

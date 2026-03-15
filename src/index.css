@@ -1,0 +1,20 @@
+/* src/index.css */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  margin: 0 !important;
+  padding: 0 !important;
+  width: 100% !important;
+  overflow-x: hidden; /* Chặn tuyệt đối viền trắng do cuộn ngang */
+  background-color: #fff; /* Ép nền trắng toàn bộ */
+}
+
+#root {
+  width: 100%;
+  margin: 0;
+  padding: 0;
+}
