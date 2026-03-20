@@ -3,29 +3,35 @@ import { toast } from "react-toastify";
 import api from "../config/axios";
 
 export const accountService = {
-  // 1. Lấy danh sách tài khoản theo loại (STUDENT, LECTURER, STAFF)
+  // 1. Lấy danh sách tài khoản
   getAccounts: async (type: "STUDENT" | "LECTURER" | "STAFF") => {
     try {
+      console.log(`>>> [Get Accounts Request] Type: ${type}`);
       const res = await api.get("/account", { params: { type } });
+      console.log(`<<< [Get Accounts Success] Count:`, res.data?.length || 0);
       return res.data;
     } catch (error: any) {
+      console.error("!!! [Get Accounts Error]:", error.response?.data || error.message);
       toast.error(`Không thể lấy danh sách ${type}`);
       throw error;
     }
   },
 
-  // 2. Lấy chi tiết một tài khoản bằng mã code
+  // 2. Lấy chi tiết tài khoản
   getAccountByCode: async (code: string, type: string) => {
     try {
+      console.log(`>>> [Get Details] Code: ${code}, Type: ${type}`);
       const res = await api.get(`/account/${code}`, { params: { type } });
+      console.log(`<<< [Get Details Success]:`, res.data);
       return res.data;
     } catch (error: any) {
-      toast.error("Không thể lấy thông tin chi tiết tài khoản");
+      console.error("!!! [Get Details Error]:", error.response?.data || error.message);
+      toast.error("Không thể lấy thông tin chi tiết");
       throw error;
     }
   },
 
-  // 3. Import tài khoản hàng loạt từ file Excel
+  // 3. Import tài khoản hàng loạt
   importAccounts: async (type: string, file: File) => {
     try {
       const formData = new FormData();
@@ -35,72 +41,97 @@ export const accountService = {
         headers: { "Content-Type": "multipart/form-data" },
       });
 
-      if (res.data && res.data.status === "ERROR") {
-        toast.error(res.data.message || "Dữ liệu không hợp lệ!");
+      console.log("<<< [FULL IMPORT RESPONSE]:", res.data);
+
+      const hasError = res.data?.error && res.data.error.length > 0;
+      const hasSuccess = res.data?.response && res.data.response.length > 0;
+
+      // TH1: Có lỗi nhưng vẫn có một vài dòng thành công (Partial Success)
+      if (hasError && hasSuccess) {
+        toast.warning(`Import một phần: ${res.data.response.length} thành công, ${res.data.error.length} lỗi.`);
+        console.table(res.data.error); 
         return res.data;
       }
 
+      // TH2: Toàn bộ đều lỗi
+      if (hasError && !hasSuccess) {
+        toast.error(`Import thất bại! Có ${res.data.error.length} lỗi xảy ra.`);
+        return res.data;
+      }
+
+      // TH3: Thành công hoàn toàn
       toast.success(`Import danh sách ${type} thành công!`);
       return res.data;
+
     } catch (error: any) {
-      const msg = error.response?.data?.message || "Lỗi khi tải lên tệp tin";
-      toast.error(msg);
+      console.error("!!! [IMPORT FATAL ERROR]:", error.response?.data || error);
+      toast.error("Lỗi hệ thống khi tải tệp tin");
       throw error;
     }
   },
 
-  // 4. Đổi trạng thái tài khoản (Active/Inactive)
-  // Dùng JSON.stringify và ép header để tránh lỗi 415
+  // 4. Đổi trạng thái (Active/Inactive)
   changeStatus: async (code: string, type: string, status: string) => {
     try {
+      console.log(`>>> [Change Status] Code: ${code}, Type: ${type}, Target: ${status}`);
       const res = await api.put(`/account/${code}/change-status`, JSON.stringify(status), {
         params: { type },
         headers: { "Content-Type": "application/json" },
       });
+      console.log("<<< [Change Status Success]:", res.data);
       toast.success("Cập nhật trạng thái thành công");
       return res.data;
     } catch (error: any) {
+      console.error("!!! [Change Status Error]:", error.response?.data || error.message);
       toast.error("Thao tác thất bại");
       throw error;
     }
   },
 
-  // 5. Bước 1: Yêu cầu đổi mật khẩu (Xác thực mật khẩu cũ để BE gửi mã về Email)
+  // 5. Yêu cầu đổi mật khẩu (Bước 1)
   requestChangePassword: async (currentPassword: string) => {
     try {
+      console.log(">>> [Change Pass Request] Validating old password...");
       const res = await api.post("/account/change-password/request", {
         password: currentPassword,
       });
+      console.log("<<< [Change Pass Request Success]");
       toast.success("Xác thực thành công! Vui lòng kiểm tra email.");
       return res.data;
     } catch (error: any) {
+      console.error("!!! [Change Pass Request Error]:", error.response?.data || error.message);
       toast.error(error.response?.data?.message || "Mật khẩu hiện tại không đúng");
       throw error;
     }
   },
 
-  // 6. Bước 2: Thực hiện đổi mật khẩu mới (Sau khi đã có quyền từ bước 1)
+  // 6. Xác nhận đổi mật khẩu (Bước 2)
   confirmChangePassword: async (newPass: string, confirmPass: string) => {
     try {
+      console.log(">>> [Confirm Change Pass] Sending new password...");
       const res = await api.put("/account/change-password", {
         newPassword: newPass,
         confirmPassword: confirmPass,
       });
+      console.log("<<< [Confirm Change Pass Success]");
       toast.success("Đổi mật khẩu thành công!");
       return res.data;
     } catch (error: any) {
-      toast.error(error.response?.data?.message || "Cập nhật mật khẩu thất bại");
+      console.error("!!! [Confirm Change Pass Error]:", error.response?.data || error.message);
+      toast.error(error.response?.data?.message || "Cập nhật thất bại");
       throw error;
     }
   },
 
-  // 7. Lấy thông tin tài khoản của chính mình (Dành cho Profile Admin)
+  // 7. Lấy thông tin cá nhân
   getMyInfo: async () => {
     try {
+      console.log(">>> [Get My Info]");
       const res = await api.get("/account/my-info");
+      console.log("<<< [Get My Info Success]:", res.data);
       return res.data;
     } catch (error: any) {
-      console.error("Không thể lấy thông tin cá nhân");
+      console.error("!!! [Get My Info Error]:", error.response?.data || error.message);
       throw error;
     }
   },

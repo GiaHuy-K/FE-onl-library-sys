@@ -1,10 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useEffect, useState } from "react";
-import { Card, Descriptions, Button, Spin, Result, Avatar, Tag, Typography, Divider } from "antd";
+import { Card, Descriptions, Button, Spin, Result, Avatar, Tag, Typography, Divider, Space } from "antd";
 import { UserOutlined, ArrowLeftOutlined, MailOutlined, CheckCircleOutlined, KeyOutlined } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
 import { accountService } from "../../services/account.service"; 
-
 
 const { Text, Title } = Typography;
 
@@ -19,12 +18,10 @@ const ProfilePage: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [userInfo, setUserInfo] = useState<UserInfo | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [isModalOpen, setIsModalOpen] = useState(false); // State mở Modal đổi pass
 
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        // Đã chỉnh: Gọi đúng API từ Account Service
         const data = await accountService.getMyInfo();
         setUserInfo(data);
       } catch (err: any) {
@@ -63,7 +60,7 @@ const ProfilePage: React.FC = () => {
       </Button>
 
       <Card
-        bordered={false}
+        variant="borderless" 
         style={{ boxShadow: "0 4px 12px rgba(0,0,0,0.05)", borderRadius: "12px" }}
       >
         <div style={{ textAlign: "center", marginBottom: 30 }}>
@@ -80,7 +77,7 @@ const ProfilePage: React.FC = () => {
           column={1} 
           labelStyle={{ fontWeight: "bold", width: "200px" }}
         >
-          <Descriptions.Item label={<span><MailOutlined /> Email liên kết</span>}>
+          <Descriptions.Item label={<Space><MailOutlined /> Email liên kết</Space>}>
             {userInfo?.email}
           </Descriptions.Item>
           
@@ -100,18 +97,12 @@ const ProfilePage: React.FC = () => {
             type="primary" 
             icon={<KeyOutlined />} 
             size="large"
-            onClick={() => setIsModalOpen(true)}
+            onClick={() => navigate("/change-password")} 
           >
             Đổi mật khẩu bảo mật
           </Button>
         </div>
       </Card>
-
-      {/* Modal đổi mật khẩu 2 bước
-      <ChangePasswordModal 
-        isOpen={isModalOpen} 
-        onCancel={() => setIsModalOpen(false)} 
-      /> */}
     </div>
   );
 };

@@ -1,5 +1,6 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React from "react";
-import { Card, Typography, Tag, Divider, Progress, List, Tooltip } from "antd";
+import { Card, Typography, Tag, Divider, Progress, Tooltip, Flex } from "antd";
 
 const { Title, Text } = Typography;
 
@@ -16,7 +17,7 @@ interface Props {
     active: number;
     total: number;
   };
-  roleDetails: RoleDetail[]; // Thêm prop dữ liệu chi tiết role
+  roleDetails: RoleDetail[];
   loading: boolean;
 }
 
@@ -28,9 +29,10 @@ const SystemStatus: React.FC<Props> = ({ stats, roleDetails, loading }) => {
   return (
     <Card 
       title="Trạng thái hệ thống" 
-      bordered={false} 
+      variant="borderless" 
       loading={loading}
-      bodyStyle={{ padding: "20px" }}
+      styles={{ body: { padding: "20px" } }} 
+      style={{ borderRadius: '12px', boxShadow: '0 4px 12px rgba(0,0,0,0.05)' }}
     >
       {/* Phần 1: Tổng quan (Số to) */}
       <div style={{ textAlign: 'center', marginBottom: 20 }}>
@@ -45,17 +47,17 @@ const SystemStatus: React.FC<Props> = ({ stats, roleDetails, loading }) => {
 
       <Divider style={{ margin: '16px 0' }}>Chi tiết từng nhóm</Divider>
 
-      {/* Phần 2: List biểu đồ hàng ngang cho từng Role */}
-      <List
-        dataSource={roleDetails}
-        renderItem={(item) => (
-          <div style={{ marginBottom: 16 }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}>
+      {/* Phần 2: Thay thế List component bị deprecated bằng Flex và map */}
+      <Flex vertical gap="middle">
+        {roleDetails?.map((item, index) => (
+          <div key={item.name || index}>
+            <Flex justify="space-between" align="flex-end" style={{ marginBottom: 4 }}>
               <Text strong style={{ fontSize: '12px' }}>{item.name}</Text>
               <Text type="secondary" style={{ fontSize: '11px' }}>
                 {item.active}/{item.total} Active
               </Text>
-            </div>
+            </Flex>
+            
             <Tooltip title={`Inactive: ${item.inactive}`}>
               <Progress 
                 percent={item.rate} 
@@ -65,8 +67,15 @@ const SystemStatus: React.FC<Props> = ({ stats, roleDetails, loading }) => {
               />
             </Tooltip>
           </div>
+        ))}
+        
+        {/* Trường hợp roleDetails rỗng */}
+        {(!roleDetails || roleDetails.length === 0) && !loading && (
+          <Text type="secondary" style={{ textAlign: 'center', display: 'block' }}>
+            Chưa có dữ liệu chi tiết
+          </Text>
         )}
-      />
+      </Flex>
     </Card>
   );
 };

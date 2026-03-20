@@ -33,7 +33,7 @@ const UserDropdown: React.FC = () => {
         message.success("Đã đăng xuất thành công");
         navigate("/login");
         break;
-      case "changePassword": // Đã chỉnh: Khớp với key ở menuItems bên dưới
+      case "changePassword": 
         navigate("/change-password");
         break;
       case "profile":
@@ -64,7 +64,7 @@ const UserDropdown: React.FC = () => {
       icon: <SettingOutlined />,
     },
     {
-      key: "changePassword", // Đã chỉnh: Khớp với logic switch case
+      key: "changePassword", 
       label: "Đổi mật khẩu",
       icon: <KeyOutlined />,
     },
