@@ -57,9 +57,9 @@ const LoginPage: React.FC = () => {
 
       toast.success(`Chào mừng quay trở lại, ${user.role}!`);
 
-      // 4. Điều hướng (Sử dụng vai trò từ JWT)
+      // 4. Điều hướng theo vai trò
       if (user.role === "ADMIN") {
-        navigate("/dashboard/overview"); // Điều hướng vào trang mặc định của Admin
+        navigate("/dashboard/overview"); 
       } else {
         navigate("/");
       }

@@ -89,36 +89,42 @@ export const accountService = {
   },
 
   // 5. Yêu cầu đổi mật khẩu (Bước 1)
-  requestChangePassword: async (currentPassword: string) => {
+ requestChangePassword: async (currentPassword: string) => {
     try {
-      console.log(">>> [Change Pass Request] Validating old password...");
+      console.log(">>> [Phase 1] Validating old password...");
       const res = await api.post("/account/change-password/request", {
         password: currentPassword,
       });
-      console.log("<<< [Change Pass Request Success]");
-      toast.success("Xác thực thành công! Vui lòng kiểm tra email.");
-      return res.data;
+      console.log("<<< [Phase 1 Response]:", res.data);
+      return res.data; 
     } catch (error: any) {
-      console.error("!!! [Change Pass Request Error]:", error.response?.data || error.message);
+      console.error("!!! [Phase 1 Error]:", error.response?.data || error.message);
       toast.error(error.response?.data?.message || "Mật khẩu hiện tại không đúng");
       throw error;
     }
   },
 
-  // 6. Xác nhận đổi mật khẩu (Bước 2)
-  confirmChangePassword: async (newPass: string, confirmPass: string) => {
+// 6. Xác nhận đổi mật khẩu (Bước 2)
+  confirmChangePassword: async (verifyToken: string, newPass: string, confirmPass: string) => {
     try {
-      console.log(">>> [Confirm Change Pass] Sending new password...");
-      const res = await api.put("/account/change-password", {
-        newPassword: newPass,
-        confirmPassword: confirmPass,
-      });
-      console.log("<<< [Confirm Change Pass Success]");
-      toast.success("Đổi mật khẩu thành công!");
+      const loginToken = localStorage.getItem("token");
+
+      const res = await api.put(
+        "/account/change-password",
+        {
+          newPassword: newPass,
+          confirmPassword: confirmPass,
+        },
+        {
+          headers: {
+            "Authorization": `Bearer ${loginToken}`,
+            "Access-Token": verifyToken.trim() 
+          }
+        }
+      );
       return res.data;
     } catch (error: any) {
-      console.error("!!! [Confirm Change Pass Error]:", error.response?.data || error.message);
-      toast.error(error.response?.data?.message || "Cập nhật thất bại");
+      console.error("!!! [Phase 2 Error]:", error.response?.data || error.message);
       throw error;
     }
   },

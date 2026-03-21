@@ -68,7 +68,7 @@ const AdminLayout: React.FC = () => {
           boxShadow: "0 2px 8px rgba(0, 0, 0, 0.05)" 
         }}>
           <div style={{ fontSize: 18, fontWeight: 500 }}>
-            👋 Xin chào, <strong>Admin</strong>
+            👋 Xin chào, <strong>Quản trị viên</strong>
           </div>
           
           {/* Component đã tách biệt */}
