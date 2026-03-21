@@ -60,14 +60,16 @@ const LoginPage: React.FC = () => {
       // 4. Điều hướng theo vai trò
       if (user.role === "ADMIN") {
         navigate("/dashboard/overview"); 
+      } else if (user.role === "STAFF") {
+        navigate("/staff/overview");
       } else {
         navigate("/");
       }
 
     } catch (error: any) {
       console.error(">>> Login Error:", error);
-      const errorMessage = error.response?.data?.message || "Tài khoản hoặc mật khẩu không chính xác!";
-      toast.error(errorMessage);
+      // const errorMessage = error.response?.data?.message || "Tài khoản hoặc mật khẩu không chính xác!";
+      // toast.error(errorMessage);
     } finally {
       setLoading(false);
     }

@@ -208,7 +208,7 @@ const AccountManager: React.FC = () => {
               icon={<UploadOutlined />}
               loading={loading}
             >
-              Import Excel
+              Import CSV
             </Button>
           </Upload>
         </div>

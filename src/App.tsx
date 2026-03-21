@@ -16,7 +16,11 @@ import AccountManager from "./pages/Admin/AccountManager";
 import ProfilePage from "./pages/users/Profile";
 import OverviewPage from "./pages/Admin/Overview/index";
 import ChangePasswordPage from "./pages/users/ChangePasswordPage";
+import StaffLayout from "./components/layouts/StaffLayout/StaffLayout";
+import MasterDataPage from "./pages/Staff/MasterDataPage";
+import BookManagement from "./pages/Staff/BookManagement";
 
+// 
 const router = createBrowserRouter([
   // --- Public Routes  ---
   { path: "/", element: <HomePage /> },
@@ -49,13 +53,26 @@ const router = createBrowserRouter([
     ],
   },
 
-  // --- Dashboard cho STAFF ---
+// --- Dashboard cho STAFF ---
   {
     element: <ProtectedRoute allowedRoles={["STAFF"]} />,
     children: [
       {
         path: "/staff",
-        element: <div>Trang của Staff</div>,
+        element: <StaffLayout />,
+        children: [
+          // Mặc định vào Staff sẽ hiện Overview
+          { index: true, element: <Navigate to="overview" replace /> },
+          { path: "overview", element: <div>Trang tổng quan Staff (Coming soon)</div> },
+          { path: "master-data", element: <MasterDataPage /> },
+
+          // Quản lý sách
+          { path: "manage-books", element: <BookManagement /> },
+
+          // Giao dịch (Mượn/Trả)
+          { path: "borrowing", element: <div>Danh sách đang mượn</div> },
+          { path: "requests", element: <div>Yêu cầu mượn mới</div> },
+        ],
       },
     ],
   },
