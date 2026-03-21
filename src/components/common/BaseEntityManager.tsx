@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useEffect, useState } from "react";
-import { Table, Button, Space, Modal, Form, Input, Select, Popconfirm, Upload, Switch, Typography, Tooltip } from "antd";
-import { PlusOutlined, EditOutlined, DeleteOutlined, UploadOutlined } from "@ant-design/icons";
+import { Table, Button, Space, Modal, Form, Input, Select, Upload, Switch, Typography, Tooltip } from "antd";
+import { PlusOutlined, EditOutlined, UploadOutlined } from "@ant-design/icons";
 
 const { Text } = Typography;
 
