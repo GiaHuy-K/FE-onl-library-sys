@@ -32,7 +32,7 @@ const items = [
   getItem("Quản lý sách", "manage-books", <BookOutlined />),
   getItem("Danh mục hệ thống", "master-data", <AppstoreOutlined />),
   getItem("Giao dịch mượn/trả", "transactions", <SwapOutlined />, [
-    getItem("Đang mượn", "borrowing", <HistoryOutlined />),
+    getItem("Đang mượn", "active-loans", <HistoryOutlined />),
     getItem("Yêu cầu mới", "ticket-requests", <ReadOutlined />),
   ], false),
 

@@ -19,6 +19,9 @@ import {
   BookOutlined,
   WalletOutlined,
   HomeOutlined,
+  CalendarOutlined,
+  SyncOutlined,
+  HistoryOutlined,
 } from "@ant-design/icons";
 import { bookService } from "../../services/book.service";
 import Header from "../../components/common/Header/Header";
@@ -36,7 +39,7 @@ const MyTickets = () => {
     const fetchTickets = async () => {
       setLoading(true);
       try {
-        const data = await bookService.getMyTickets(); 
+        const data = await bookService.getMyTickets();
         setTickets(data);
       } catch (error) {
         console.error("Lỗi fetch tickets:", error);
@@ -52,7 +55,7 @@ const MyTickets = () => {
       title: "Mã phiếu",
       dataIndex: "ticketId",
       key: "ticketId",
-      width: 120,
+      width: 100,
       render: (id: number) => <Text strong>#T-{id}</Text>,
     },
     {
@@ -74,30 +77,85 @@ const MyTickets = () => {
       title: "Ngày mượn",
       dataIndex: "borrowFrom",
       key: "borrowFrom",
-      render: (date: string) => dayjs(date).format("DD/MM/YYYY HH:mm"),
+      render: (date: string) => (
+        <Space direction="vertical" size={0}>
+          <Text type="secondary" style={{ fontSize: "11px" }}>
+            Bắt đầu
+          </Text>
+          <Text>{dayjs(date).format("DD/MM/YYYY")}</Text>
+        </Space>
+      ),
+    },
+    {
+      title: "Hạn trả sách",
+      dataIndex: "borrowTo",
+      key: "borrowTo",
+      render: (date: string, record: any) => {
+        const showDate =
+          record.status === "APPROVED" ||
+          record.status === "BORROWING" ||
+          record.status === "RETURNED";
+        if (!showDate) return <Text type="secondary">---</Text>;
+
+        return (
+          <Space direction="vertical" size={0}>
+            <Text type="secondary" style={{ fontSize: "11px" }}>
+              Hạn cuối
+            </Text>
+            <Text
+              strong
+              style={{ color: record.expired ? "#ff4d4f" : "#1677ff" }}
+            >
+              {dayjs(date).format("DD/MM/YYYY")}
+            </Text>
+          </Space>
+        );
+      },
     },
     {
       title: "Trạng thái",
       dataIndex: "status",
       key: "status",
       render: (status: string) => {
-        let color = "orange";
+        let color = "default";
         let icon = <ClockCircleOutlined />;
-        if (status === "APPROVED") {
-          color = "green";
-          icon = <CheckCircleOutlined />;
+        let label = status;
+
+        switch (status) {
+          case "PENDING":
+            color = "orange";
+            icon = <ClockCircleOutlined spin />;
+            label = "CHỜ DUYỆT";
+            break;
+          case "APPROVED":
+            color = "cyan";
+            icon = <CheckCircleOutlined />;
+            label = "ĐÃ DUYỆT";
+            break;
+          case "BORROWING":
+            color = "processing";
+            icon = <SyncOutlined spin />;
+            label = "ĐANG MƯỢN";
+            break;
+          case "RETURNED":
+            color = "success";
+            icon = <HistoryOutlined />;
+            label = "ĐÃ TRẢ SÁCH";
+            break;
+          case "REJECTED":
+            color = "error";
+            icon = <CloseCircleOutlined />;
+            label = "BỊ TỪ CHỐI";
+            break;
         }
-        if (status === "REJECTED") {
-          color = "red";
-          icon = <CloseCircleOutlined />;
-        }
+
         return (
           <Tag
             icon={icon}
             color={color}
-            style={{ borderRadius: "4px", fontWeight: 500 }}
+            style={{ borderRadius: "4px", fontWeight: 600, padding: "2px 8px" }}
           >
-            {status}
+            {label}
           </Tag>
         );
       },
@@ -117,7 +175,6 @@ const MyTickets = () => {
   return (
     <Layout style={{ minHeight: "100vh", backgroundColor: "#f4f7f6" }}>
       <Header />
-
       <Content style={{ padding: "24px 50px" }}>
         <div style={{ maxWidth: "1200px", margin: "0 auto" }}>
           <Breadcrumb style={{ marginBottom: "24px" }}>
@@ -127,40 +184,86 @@ const MyTickets = () => {
             <Breadcrumb.Item>Phiếu mượn của tôi</Breadcrumb.Item>
           </Breadcrumb>
 
-          {/* Row Thống kê  */}
-          <Row gutter={[24, 24]} style={{ marginBottom: "32px" }}>
-            <Col xs={24} sm={8}>
-              <Card bordered={false} hoverable style={{ borderRadius: "12px" }}>
+          <Row gutter={[16, 16]} style={{ marginBottom: "32px" }}>
+            {/* 1. Nhóm Đang xử lý  */}
+            <Col xs={12} sm={6}>
+              <Card
+                bordered={false}
+                hoverable
+                style={{ borderRadius: "12px", borderTop: "4px solid #faad14" }}
+              >
                 <Statistic
-                  title="Tổng số phiếu"
-                  value={tickets.length}
-                  prefix={<BookOutlined style={{ color: "#FF6E61" }} />}
-                />
-              </Card>
-            </Col>
-            <Col xs={24} sm={8}>
-              <Card bordered={false} hoverable style={{ borderRadius: "12px" }}>
-                <Statistic
-                  title="Đang chờ duyệt"
-                  value={tickets.filter((t) => t.status === "PENDING").length}
+                  title="Đang xử lý"
+                  value={
+                    tickets.filter(
+                      (t) => t.status === "PENDING" || t.status === "APPROVED",
+                    ).length
+                  }
                   valueStyle={{ color: "#faad14" }}
                   prefix={<ClockCircleOutlined />}
+                  suffix={
+                    <Text type="secondary" style={{ fontSize: "12px" }}>
+                      /{tickets.length}
+                    </Text>
+                  }
                 />
               </Card>
             </Col>
-            <Col xs={24} sm={8}>
-              <Card bordered={false} hoverable style={{ borderRadius: "12px" }}>
+
+            {/* 2. Sách đang mượn  */}
+            <Col xs={12} sm={6}>
+              <Card
+                bordered={false}
+                hoverable
+                style={{ borderRadius: "12px", borderTop: "4px solid #1890ff" }}
+              >
                 <Statistic
-                  title="Tiền phí dự kiến"
+                  title="Đang cầm sách"
+                  value={tickets.filter((t) => t.status === "BORROWING").length}
+                  valueStyle={{ color: "#1890ff" }}
+                  prefix={
+                    <SyncOutlined
+                      spin={tickets.some((t) => t.status === "BORROWING")}
+                    />
+                  }
+                />
+              </Card>
+            </Col>
+
+            {/* 3. Lịch sử đã trả  */}
+            <Col xs={12} sm={6}>
+              <Card
+                bordered={false}
+                hoverable
+                style={{ borderRadius: "12px", borderTop: "4px solid #52c41a" }}
+              >
+                <Statistic
+                  title="Sách đã trả"
+                  value={tickets.filter((t) => t.status === "RETURNED").length}
+                  valueStyle={{ color: "#52c41a" }}
+                  prefix={<HistoryOutlined />}
+                />
+              </Card>
+            </Col>
+
+            {/* 4.  (Phí phạt) */}
+            <Col xs={12} sm={6}>
+              <Card
+                bordered={false}
+                hoverable
+                style={{ borderRadius: "12px", borderTop: "4px solid #ff4d4f" }}
+              >
+                <Statistic
+                  title="Phí cần nộp"
                   value={tickets.reduce((sum, t) => sum + (t.fee || 0), 0)}
                   suffix="đ"
-                  prefix={<WalletOutlined style={{ color: "#52c41a" }} />}
+                  valueStyle={{ color: "#ff4d4f" }}
+                  prefix={<WalletOutlined />}
                 />
               </Card>
             </Col>
           </Row>
 
-          {/* Bảng danh sách chính */}
           <Card
             bordered={false}
             style={{
@@ -172,7 +275,9 @@ const MyTickets = () => {
                 level={4}
                 style={{ margin: 0, display: "flex", alignItems: "center" }}
               >
-                <BookOutlined style={{ marginRight: 12, color: "#FF6E61" }} />
+                <CalendarOutlined
+                  style={{ marginRight: 12, color: "#FF6E61" }}
+                />
                 DANH SÁCH PHIẾU MƯỢN CÁ NHÂN
               </Title>
             }
@@ -182,13 +287,12 @@ const MyTickets = () => {
               dataSource={tickets}
               loading={loading}
               rowKey="ticketId"
-              pagination={{ pageSize: 5 }}
-              scroll={{ x: 700 }}
+              pagination={{ pageSize: 6 }}
+              scroll={{ x: 1000 }}
             />
           </Card>
         </div>
       </Content>
-
       <Footer />
     </Layout>
   );

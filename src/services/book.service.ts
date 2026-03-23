@@ -141,7 +141,6 @@ borrowBook: async (bookId: number | string) => {
 
   try {
     const res = await api.post("/book/borrow", payload);
-    console.log(">>> Borrow Success Response:", res.data);
     toast.success(`Gửi yêu cầu thành công! Nhân viên sẽ duyệt và liên hệ bạn sớm.`);
     return res.data;
   } catch (error: any) {
@@ -156,7 +155,6 @@ borrowBook: async (bookId: number | string) => {
  getMyTickets: async () => {
   try {
     const res = await api.get("/book/borrow/my-tickets"); 
-    console.log(">>> My Tickets Success:", res.data);
     return res.data;
   } catch (error: any) {
     console.error(">>> Get My Tickets Error:", error.response?.data || error.message);
@@ -168,7 +166,6 @@ borrowBook: async (bookId: number | string) => {
   getAllTickets: async () => {
     try {
       const res = await api.get("/book/borrow/tickets");
-      console.log(">>> Staff - All Tickets:", res.data);
       return res.data;
     } catch (error: any) {
       console.error(">>> Get All Tickets Error:", error.response?.data || error.message);
@@ -178,12 +175,12 @@ borrowBook: async (bookId: number | string) => {
 
   // 13. Staff duyệt yêu cầu mượn (Process)
   processBorrowRequest: async (payload: any) => {
-    console.log(">>> Processing Ticket:", payload);
     try {
       const res = await api.put("/book/borrow/process", payload);
       toast.success("Đã xử lý yêu cầu mượn");
       return res.data;
     } catch (error: any) {
+      console.error(">>> Process Borrow Request Error:", error.response?.data || error.message);
       toast.error("Lỗi khi duyệt phiếu mượn");
       throw error;
     }
@@ -193,7 +190,6 @@ borrowBook: async (bookId: number | string) => {
   checkoutBook: async (ticketId: number | string) => {
     try {
       const res = await api.put(`/book/borrow/${ticketId}/checkout`);
-      console.log(`>>> Checkout Ticket ${ticketId} Success`);
       toast.success("Sách đã được xuất kho!");
       return res.data;
     } catch (error: any) {
@@ -206,7 +202,6 @@ borrowBook: async (bookId: number | string) => {
   returnBook: async (ticketId: number | string) => {
     try {
       const res = await api.put(`/book/borrow/${ticketId}/return`);
-      console.log(`>>> Return Ticket ${ticketId} Success`);
       toast.success("Xác nhận trả sách thành công");
       return res.data;
     } catch (error: any) {

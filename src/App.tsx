@@ -22,6 +22,8 @@ import BookManagement from "./pages/Staff/BookManagement";
 import ChatAIWidget from "./components/ChatAIWidget/ChatAIWidget";
 import MyTickets from "./pages/users/MyTickets";
 import TicketManager from "./pages/Staff/TicketManager";
+import ActiveLoans from "./pages/Staff/ActiveLoans";
+import StaffOverview from "./pages/Staff/Overview/Overview";
 
 
 const router = createBrowserRouter([
@@ -67,14 +69,14 @@ const router = createBrowserRouter([
         children: [
           // Mặc định vào Staff sẽ hiện Overview
           { index: true, element: <Navigate to="overview" replace /> },
-          { path: "overview", element: <div>Trang tổng quan Staff (Coming soon)</div> },
+          { path: "overview", element: <StaffOverview />               },
           { path: "master-data", element: <MasterDataPage /> },
 
           // Quản lý sách
           { path: "manage-books", element: <BookManagement /> },
 
           // Giao dịch (Mượn/Trả)
-          { path: "borrowing", element: <div>Danh sách đang mượn</div> },
+          { path: "active-loans", element: <ActiveLoans /> },
           { path: "ticket-requests", element: <TicketManager /> },
         ],
       },
