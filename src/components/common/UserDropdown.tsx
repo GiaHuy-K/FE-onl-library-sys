@@ -47,8 +47,8 @@ const UserDropdown: React.FC = () => {
         if (user?.role === "ADMIN") navigate("/dashboard/overview");
         else if (user?.role === "STAFF") navigate("/staff");
         break;
-      case "my-loans":
-        navigate("/my-loans"); 
+      case "my-tickets":
+        navigate("/my-tickets");
         break;
       default:
         break;
@@ -71,8 +71,8 @@ const UserDropdown: React.FC = () => {
     // 2. Thêm mục Mượn sách cho STUDENT và LECTURER
     if (user?.role === "STUDENT" || user?.role === "LECTURER") {
       baseItems.push({
-        key: "my-loans",
-        label: "Sách của tôi",
+        key: "my-tickets",
+        label: "Phiếu mượn của tôi",
         icon: <BookOutlined />,
       });
     }

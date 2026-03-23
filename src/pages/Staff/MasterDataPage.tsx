@@ -6,16 +6,13 @@ import { categoryService } from "../../services/category.service";
 import { authorService } from "../../services/author.service";
 import { publisherService } from "../../services/publisher.service";
 
-const { Title, Text } = Typography;
+const { Title } = Typography;
 
 const MasterDataPage: React.FC = () => {
   return (
     <div style={{ padding: "12px" }}>
       <div style={{ marginBottom: 24 }}>
-        <Title level={3}>Quản lý danh mục hệ thống</Title>
-        <Text type="secondary">
-          Quản lý tập trung Thể loại, Tác giả và Nhà xuất bản
-        </Text>
+        <Title level={2} style={{ margin: 0, color: '#FF6E61', fontSize: '24px' }}>Quản lý danh mục hệ thống</Title>
       </div>
 
       <Divider />

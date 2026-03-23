@@ -29,11 +29,11 @@ const items = [
   getItem("Tổng quan", "overview", <PieChartOutlined />),
   
   // Nhóm nghiệp vụ chính
-  getItem("Quản lý Sách", "manage-books", <BookOutlined />),
+  getItem("Quản lý sách", "manage-books", <BookOutlined />),
   getItem("Danh mục hệ thống", "master-data", <AppstoreOutlined />),
   getItem("Giao dịch mượn/trả", "transactions", <SwapOutlined />, [
     getItem("Đang mượn", "borrowing", <HistoryOutlined />),
-    getItem("Yêu cầu mới", "requests", <ReadOutlined />),
+    getItem("Yêu cầu mới", "ticket-requests", <ReadOutlined />),
   ], false),
 
   getItem("Quay lại trang chủ", "home", <HomeOutlined />),

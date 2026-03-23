@@ -20,7 +20,10 @@ import StaffLayout from "./components/layouts/StaffLayout/StaffLayout";
 import MasterDataPage from "./pages/Staff/MasterDataPage";
 import BookManagement from "./pages/Staff/BookManagement";
 import ChatAIWidget from "./components/ChatAIWidget/ChatAIWidget";
-// 
+import MyTickets from "./pages/users/MyTickets";
+import TicketManager from "./pages/Staff/TicketManager";
+
+
 const router = createBrowserRouter([
   // --- Public Routes  ---
   { path: "/", element: <HomePage /> },
@@ -33,6 +36,7 @@ const router = createBrowserRouter([
     children: [
       { path: "/change-password", element: <ChangePasswordPage /> },
       { path: "/profile", element: <ProfilePage /> },
+      { path: "/my-tickets", element: <MyTickets /> },
     ],
   },
 
@@ -71,7 +75,7 @@ const router = createBrowserRouter([
 
           // Giao dịch (Mượn/Trả)
           { path: "borrowing", element: <div>Danh sách đang mượn</div> },
-          { path: "requests", element: <div>Yêu cầu mượn mới</div> },
+          { path: "ticket-requests", element: <TicketManager /> },
         ],
       },
     ],

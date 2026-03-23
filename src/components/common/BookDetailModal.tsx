@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Modal, Spin, Typography, Tag, Divider, Image, Space, Descriptions, Button } from "antd";
+import { Modal, Spin, Typography, Tag, Divider, Image, Space, Descriptions, Button} from "antd";
 import { useEffect, useState } from "react";
 import { bookService } from "../../services/book.service";
 import { useAuth } from "../../config/useAuth"; 
@@ -10,9 +10,9 @@ const { Title, Text, Paragraph } = Typography;
 const BookDetailModal = ({ open, bookId, onCancel }: any) => {
   const [book, setBook] = useState<any>(null);
   const [loading, setLoading] = useState(false);
+  const [borrowLoading, setBorrowLoading] = useState(false); 
   const { user } = useAuth(); 
 
-  //Nếu không có user thì mặc định là STUDENT
   const isStaff = user?.role === "STAFF" || user?.role === "ADMIN";
 
   useEffect(() => {
@@ -32,14 +32,38 @@ const BookDetailModal = ({ open, bookId, onCancel }: any) => {
     }
   }, [open, bookId]);
 
+  // Hàm xử lý mượn sách 
+  const handleBorrow = async () => {
+    if (!bookId) return;
+    setBorrowLoading(true);
+    try {
+      const res = await bookService.borrowBook(bookId);
+      if (res) {
+        onCancel(); 
+      }
+    } catch (error) {
+      console.error("Borrowing failed", error);
+    } finally {
+      setBorrowLoading(false);
+    }
+  };
+
   return (
     <Modal
       open={open}
       onCancel={onCancel}
       footer={[
         <Button key="close" onClick={onCancel}>Đóng</Button>,
+        // Chỉ Student mới thấy nút mượn và chỉ hiện khi còn sách
         !isStaff && book?.quantity > 0 && (
-          <Button key="borrow" type="primary" style={{ backgroundColor: '#00BFA5' }} icon={<ShoppingCartOutlined />}>
+          <Button 
+            key="borrow" 
+            type="primary" 
+            style={{ backgroundColor: '#00BFA5', borderColor: '#00BFA5' }} 
+            icon={<ShoppingCartOutlined />}
+            loading={borrowLoading} 
+            onClick={handleBorrow}
+          >
             Mượn sách
           </Button>
         )
@@ -48,7 +72,7 @@ const BookDetailModal = ({ open, bookId, onCancel }: any) => {
       centered
       title={<span><InfoCircleOutlined /> {isStaff ? "Quản lý sách" : "Chi tiết tác phẩm"}</span>}
     >
-      <Spin spinning={loading} description="Pé đang lấy sách xuống...">
+      <Spin spinning={loading} description="Đang lấy sách ">
         {book ? (
           <div style={{ display: "flex", gap: "24px", paddingTop: '10px' }}>
             <div style={{ flex: "0 0 200px" }}>
@@ -64,15 +88,14 @@ const BookDetailModal = ({ open, bookId, onCancel }: any) => {
               <Text type="secondary" style={{ marginBottom: 16, display: 'block' }}>ISBN: {book.isbn || 'N/A'}</Text>
               
               <Space direction="vertical" style={{ width: '100%' }}>
-                <Text><UserOutlined /> Tác giả: <Text strong>{book.authorNames?.join(", ") || book.author || "N/A"}</Text></Text>
-                <Text><TagsOutlined /> Thể loại: {book.categoryNames?.map((c: any) => <Tag color="cyan" key={c}>{c}</Tag>) || "Chung"}</Text>
-                <Text><BankOutlined /> NXB: {book.publisherName || "N/A"}</Text>
+                <Text><UserOutlined style={{ marginRight: 8 }}/>Tác giả: <Text strong>{book.authorNames?.join(", ") || book.author || "N/A"}</Text></Text>
+                <Text><TagsOutlined style={{ marginRight: 8 }}/>Thể loại: {book.categoryNames?.map((c: any) => <Tag color="cyan" key={c}>{c}</Tag>) || "Chung"}</Text>
+                <Text><BankOutlined style={{ marginRight: 8 }}/>NXB: {book.publisherName || "N/A"}</Text>
               </Space>
 
               <Divider style={{ margin: '16px 0' }} />
 
               <Descriptions column={1} size="small">
-                {/* ROLE STAFF: HIỆN GIÁ & SỐ LƯỢNG */}
                 {isStaff && (
                   <>
                     <Descriptions.Item label="Giá bán/mượn">
@@ -82,7 +105,6 @@ const BookDetailModal = ({ open, bookId, onCancel }: any) => {
                   </>
                 )}
                 
-                {/* ROLE STUDENT: CHỈ HIỆN TRẠNG THÁI */}
                 {!isStaff && (
                   <Descriptions.Item label="Trạng thái">
                     <Tag color={book.quantity > 0 ? "green" : "red"}>

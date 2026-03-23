@@ -174,7 +174,7 @@ function BookManagement() {
   return (
     <div style={{ padding: 24, background: "#fff", minHeight: "100vh" }}>
       <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 24 }}>
-        <Title level={2}>📚 Quản lý Sách</Title>
+        <Title level={2} style={{ margin: 0, color: '#FF6E61', fontSize: '24px' }}>📚 Quản lý sách</Title>
         <Space>
           <Upload 
             accept=".csv"

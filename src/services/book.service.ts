@@ -129,31 +129,40 @@ export const bookService = {
   // --- 3. NGHIỆP VỤ MƯỢN TRẢ (BORROWING) ---
 
   // 10. User yêu cầu mượn sách
-  borrowBook: async (payload: { bookId: number | string, borrowDays: number }) => {
-    console.log(">>> Debug Borrow Payload:", payload);
-    try {
-      const res = await api.post("/book/borrow", payload);
-      console.log(">>> Borrow Success Response:", res.data);
-      toast.success("Gửi yêu cầu mượn thành công!");
-      return res.data;
-    } catch (error: any) {
-      console.error(">>> Borrow Error:", error.response?.data);
-      toast.error(error.response?.data?.message || "Lỗi khi mượn sách");
-      throw error;
-    }
-  },
+
+borrowBook: async (bookId: number | string) => {
+  
+  const payload = {
+    bookIds: [Number(bookId)], 
+    borrowDate: new Date().toISOString().split('T')[0] 
+  };
+
+  console.log(">>> Debug Borrow Payload (Swagger Match):", payload);
+
+  try {
+    const res = await api.post("/book/borrow", payload);
+    console.log(">>> Borrow Success Response:", res.data);
+    toast.success(`Gửi yêu cầu thành công! Nhân viên sẽ duyệt và liên hệ bạn sớm.`);
+    return res.data;
+  } catch (error: any) {
+    console.error(">>> Borrow Error Detail:", error.response?.data);
+    const serverMsg = error.response?.data?.message || "Lỗi khi mượn sách bạn ơi!";
+    toast.error(serverMsg);
+    throw error;
+  }
+},
 
   // 11. Lấy phiếu mượn cá nhân (User)
-  getMyTickets: async () => {
-    try {
-      const res = await api.get("/book/borrow/my-tickets");
-      console.log(">>> My Tickets:", res.data);
-      return res.data;
-    } catch (error: any) {
-      console.error(">>> Get My Tickets Error:", error);
-      throw error;
-    }
-  },
+ getMyTickets: async () => {
+  try {
+    const res = await api.get("/book/borrow/my-tickets"); 
+    console.log(">>> My Tickets Success:", res.data);
+    return res.data;
+  } catch (error: any) {
+    console.error(">>> Get My Tickets Error:", error.response?.data || error.message);
+    throw error;
+  }
+},
 
   // 12. Lấy tất cả phiếu mượn (Staff)
   getAllTickets: async () => {
@@ -162,7 +171,7 @@ export const bookService = {
       console.log(">>> Staff - All Tickets:", res.data);
       return res.data;
     } catch (error: any) {
-      console.error(">>> Get All Tickets Error:", error);
+      console.error(">>> Get All Tickets Error:", error.response?.data || error.message);
       throw error;
     }
   },
