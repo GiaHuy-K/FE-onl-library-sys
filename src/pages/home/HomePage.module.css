@@ -1,0 +1,93 @@
+/* Ép font toàn cục cho mainWrapper */
+.mainWrapper {
+  background-color: #fff;
+  min-height: 100vh;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+}
+
+/* Banner Section */
+.bannerSection {
+  background-color: #fafafa;
+  padding: 80px 0; 
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.bannerContainer {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+  display: flex;
+  align-items: center;
+  gap: 80px;
+}
+
+.bookCover {
+  width: 240px; 
+  height: 340px;
+  border-radius: 12px;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.12);
+  object-fit: cover;
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.bookCover:hover {
+  transform: translateY(-15px) rotate(-3deg) scale(1.02);
+  box-shadow: 0 30px 60px rgba(0,0,0,0.18);
+}
+
+.quoteWrapper {
+  flex: 1;
+}
+
+.quoteText {
+
+  font-family: 'Inter', sans-serif !important; 
+  font-style: italic;
+  font-weight: 500; 
+  line-height: 1.8; 
+  color: #262626;
+  margin-bottom: 16px;
+  font-size: 26px;
+  letter-spacing: -0.02em;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+
+.listSection {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 80px 20px;
+}
+
+.sectionHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 48px;
+}
+
+.listSection :global(.ant-typography) {
+  font-family: 'Inter', sans-serif !important;
+}
+
+.bookCard {
+  border-radius: 12px;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  border: 1px solid #f0f0f0;
+  background: #fff;
+}
+
+.bookCard:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 12px 30px rgba(0,0,0,0.08);
+  border-color: #FF6E61; 
+}
+
+
+.listSection :global(.ant-ribbon) {
+  font-weight: 600;
+  font-size: 12px;
+  padding: 0 10px;
+}

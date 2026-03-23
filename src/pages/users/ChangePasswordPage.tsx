@@ -114,7 +114,7 @@ const ChangePasswordPage: React.FC = () => {
             )}
 
             {currentStep === 2 && (
-              <Result status="success" title="Thành công!" subTitle="Mật khẩu của anh đã được cập nhật."
+              <Result status="success" title="Thành công!" subTitle="Mật khẩu đã được cập nhật."
                 extra={<Button type="primary" onClick={() => navigate("/")}>Về trang chủ</Button>}
               />
             )}

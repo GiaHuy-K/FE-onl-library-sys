@@ -6,9 +6,7 @@ export const accountService = {
   // 1. Lấy danh sách tài khoản
   getAccounts: async (type: "STUDENT" | "LECTURER" | "STAFF") => {
     try {
-      console.log(`>>> [Get Accounts Request] Type: ${type}`);
       const res = await api.get("/account", { params: { type } });
-      console.log(`<<< [Get Accounts Success] Count:`, res.data?.length || 0);
       return res.data;
     } catch (error: any) {
       console.error("!!! [Get Accounts Error]:", error.response?.data || error.message);
@@ -20,9 +18,7 @@ export const accountService = {
   // 2. Lấy chi tiết tài khoản
   getAccountByCode: async (code: string, type: string) => {
     try {
-      console.log(`>>> [Get Details] Code: ${code}, Type: ${type}`);
       const res = await api.get(`/account/${code}`, { params: { type } });
-      console.log(`<<< [Get Details Success]:`, res.data);
       return res.data;
     } catch (error: any) {
       console.error("!!! [Get Details Error]:", error.response?.data || error.message);
@@ -41,12 +37,10 @@ export const accountService = {
         headers: { "Content-Type": "multipart/form-data" },
       });
 
-      console.log("<<< [FULL IMPORT RESPONSE]:", res.data);
-
       const hasError = res.data?.error && res.data.error.length > 0;
       const hasSuccess = res.data?.response && res.data.response.length > 0;
 
-      // TH1: Có lỗi nhưng vẫn có một vài dòng thành công (Partial Success)
+      // TH1: Có lỗi nhưng vẫn có một vài dòng thành công 
       if (hasError && hasSuccess) {
         toast.warning(`Import một phần: ${res.data.response.length} thành công, ${res.data.error.length} lỗi.`);
         console.table(res.data.error); 
@@ -73,12 +67,10 @@ export const accountService = {
   // 4. Đổi trạng thái (Active/Inactive)
   changeStatus: async (code: string, type: string, status: string) => {
     try {
-      console.log(`>>> [Change Status] Code: ${code}, Type: ${type}, Target: ${status}`);
       const res = await api.put(`/account/${code}/change-status`, JSON.stringify(status), {
         params: { type },
         headers: { "Content-Type": "application/json" },
       });
-      console.log("<<< [Change Status Success]:", res.data);
       toast.success("Cập nhật trạng thái thành công");
       return res.data;
     } catch (error: any) {
@@ -91,11 +83,9 @@ export const accountService = {
   // 5. Yêu cầu đổi mật khẩu (Bước 1)
  requestChangePassword: async (currentPassword: string) => {
     try {
-      console.log(">>> [Phase 1] Validating old password...");
       const res = await api.post("/account/change-password/request", {
         password: currentPassword,
       });
-      console.log("<<< [Phase 1 Response]:", res.data);
       return res.data; 
     } catch (error: any) {
       console.error("!!! [Phase 1 Error]:", error.response?.data || error.message);
@@ -132,9 +122,7 @@ export const accountService = {
   // 7. Lấy thông tin cá nhân
   getMyInfo: async () => {
     try {
-      console.log(">>> [Get My Info]");
       const res = await api.get("/account/my-info");
-      console.log("<<< [Get My Info Success]:", res.data);
       return res.data;
     } catch (error: any) {
       console.error("!!! [Get My Info Error]:", error.response?.data || error.message);

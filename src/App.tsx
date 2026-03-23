@@ -19,7 +19,7 @@ import ChangePasswordPage from "./pages/users/ChangePasswordPage";
 import StaffLayout from "./components/layouts/StaffLayout/StaffLayout";
 import MasterDataPage from "./pages/Staff/MasterDataPage";
 import BookManagement from "./pages/Staff/BookManagement";
-
+import ChatAIWidget from "./components/ChatAIWidget/ChatAIWidget";
 // 
 const router = createBrowserRouter([
   // --- Public Routes  ---
@@ -85,6 +85,7 @@ export default function App() {
   return (
     <AuthProvider>
       <RouterProvider router={router} />
+      <ChatAIWidget />
       <ToastContainer position="top-right" autoClose={3000} />
     </AuthProvider>
   );

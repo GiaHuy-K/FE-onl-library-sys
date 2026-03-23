@@ -1,92 +1,178 @@
-import { Box, Container, Typography, Stack, Button, Paper } from '@mui/material';
-import Grid from '@mui/material/Grid';
-import Header from '../../components/common/Header'; 
-import Footer from '../../components/common/Footer';
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { useEffect, useState } from "react";
+import { 
+  Layout, 
+  Typography, 
+  Row, 
+  Col, 
+  Card, 
+  Badge, 
+  Spin, 
+  Empty, 
+  ConfigProvider 
+} from "antd";
+import { FireOutlined } from "@ant-design/icons";
+import { useLocation } from "react-router-dom";
+import Header from "../../components/common/Header/Header";
+import Footer from "../../components/common/Footer/Footer";
+import BookDetailModal from "../../components/common/BookDetailModal";
+import { bookService } from "../../services/book.service";
+import styles from "./HomePage.module.css";
+
+const { Content } = Layout;
+const { Title, Text } = Typography;
+
 const HomePage = () => {
-  const books = [
-    { title: "Sách đề cử 1", img: "https://manybooks.net/sites/default/files/styles/240x360/public/book-covers/mysisterssecretkeeper.jpg" },
-    { title: "Sách đề cử 2", img: "https://manybooks.net/sites/default/files/styles/240x360/public/book-covers/couragethroughadversity.jpg" },
-    { title: "Sách đề cử 3", img: "https://manybooks.net/sites/default/files/styles/240x360/public/book-covers/justforthismoment.jpg" },
-    { title: "Sách đề cử 4", img: "https://manybooks.net/sites/default/files/styles/240x360/public/book-covers/thecarnationmurder.jpg" },
-  ];
+  const [books, setBooks] = useState<any[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [selectedBookId, setSelectedBookId] = useState<number | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const location = useLocation();
+  const searchKeyword = new URLSearchParams(location.search).get("search");
+
+  const loadData = async () => {
+    setLoading(true);
+    try {
+      const data = searchKeyword
+        ? await bookService.searchBooks(searchKeyword)
+        : await bookService.getAllBooks();
+      setBooks(data);
+    } catch (error) {
+      console.error("Lỗi load sách:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    loadData();
+  }, [searchKeyword]);
+
+  const handleOpenDetail = (id: number) => {
+    setSelectedBookId(id);
+    setIsModalOpen(true);
+  };
 
   return (
-    <>
-      <Header />
-      <Box sx={{ bgcolor: '#fff', minHeight: '100vh', width: '100%', overflowX: 'hidden' }}>
+    
+    <ConfigProvider
+      theme={{
+        token: {
+          colorPrimary: "#FF6E61",
+          fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif",
+        },
+      }}
+    >
+      <Layout className={styles.mainWrapper}>
+        <Header />
+        <Content>
+          {/* 1. Banner: Ảnh & Quote */}
+          {!searchKeyword && (
+            <div className={styles.bannerSection}>
+              <div className={styles.bannerContainer}>
+                <img
+                  src="https://images.unsplash.com/photo-1544947950-fa07a98d237f?q=80&w=1000&auto=format&fit=crop"
+                  alt="Featured Book"
+                  className={styles.bookCover}
+                />
+                <div className={styles.quoteWrapper}>
+                  <Title level={2} className={styles.quoteText}>
+                    "Một cuốn sách thực sự hay nên đọc trong tuổi trẻ, rồi đọc lại
+                    khi đã trưởng thành, và một nửa lúc tuổi già, giống như một
+                    tòa nhà đẹp nên được chiêm ngưỡng trong ánh bình minh, nắng
+                    trưa và ánh trăng.”
+                  </Title>
+                  <Text
+                    type="secondary"
+                    style={{ fontSize: "18px", display: "block", fontStyle: "normal" }}
+                  >
+                    - Robertson Davies
+                  </Text>
+                </div>
+              </div>
+            </div>
+          )}
 
-        {/* 1. Banner Cam Trắng - Đảm bảo tràn 100% lề */}
-        <Box sx={{
-          background: 'linear-gradient(135deg, #FF6E61 0%, #FF9E80 100%)',
-          py: { xs: 8, md: 12 },
-          color: '#fff',
-          textAlign: 'center',
-          width: '100%', // Ép Box này luôn rộng hết màn hình
-          m: 0, p: 0 // Loại bỏ margin thừa nếu có
-      }}>
-        {/* Container chỉ bọc NỘI DUNG  */}
-        <Container maxWidth="md">
-          <Typography variant="h2" sx={{ fontWeight: 900, mb: 2, fontSize: { xs: '2.2rem', md: '3.8rem' } }}>
-            THƯ VIỆN SỐ THẾ HỆ MỚI
-          </Typography>
-          <Typography variant="h6" sx={{ opacity: 0.9, fontWeight: 400, mb: 4 }}>
-            Tìm kiếm và trò chuyện cùng hàng ngàn cuốn sách với AI.
-          </Typography>
-          <Button 
-            variant="contained" 
-            sx={{ 
-              bgcolor: '#fff', 
-              color: '#FF6E61', 
-              fontWeight: 700, 
-              px: 4, py: 1.5, 
-              borderRadius: '50px',
-              border: 'none',
-              boxShadow: '0 4px 14px rgba(0,0,0,0.1)',
-              '&:hover': { bgcolor: '#f5f5f5', boxShadow: '0 6px 20px rgba(0,0,0,0.15)' }
-            }}
-          >
-            BẮT ĐẦU ĐỌC NGAY
-          </Button>
-        </Container>
-      </Box>
+          {/* 2. Danh sách sách */}
+          <div className={styles.listSection}>
+            <div className={styles.sectionHeader}>
+              <Title level={3} style={{ margin: 0, fontWeight: 800 }}>
+                <FireOutlined style={{ color: "#FF6E61", marginRight: "8px" }} />
+                {searchKeyword
+                  ? `KẾT QUẢ CHO: "${searchKeyword}"`
+                  : "NHỮNG TÁC PHẨM TIÊU BIỂU"}
+              </Title>
+            </div>
 
-      {/* 2. Phần danh sách sách - Căn giữa nội dung */}
-      <Container maxWidth="lg" sx={{ py: 8 }}>
-        <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 4 }}>
-          <Typography variant="h5" sx={{ fontWeight: 800, color: '#333' }}>
-            SÁCH MIỄN PHÍ PHỔ BIẾN
-          </Typography>
-          <Button sx={{ color: '#FF6E61', fontWeight: 700, textTransform: 'none' }}>
-            Xem tất cả
-          </Button>
-        </Stack>
+            <Spin spinning={loading} tip="đang chuẩn bị kệ sách...">
+              <Row gutter={[32, 40]}>
+                {books.length > 0 ? (
+                  books.map((book) => (
+                    <Col xs={12} sm={8} md={6} key={book.bookId}>
+                      <Badge.Ribbon
+                        text={book.quantity > 0 ? "Sẵn có" : "Hết sách"}
+                        color={book.quantity > 0 ? "cyan" : "volcano"}
+                      >
+                        <Card
+                          hoverable
+                          className={styles.bookCard}
+                          cover={
+                            <img
+                              alt={book.title}
+                              src={
+                                book.image ||
+                                book.coverImg ||
+                                "https://placehold.co/300x450?text=No+Cover"
+                              }
+                              style={{ height: "320px", objectFit: "cover" }}
+                              onError={(e: any) =>
+                                (e.target.src =
+                                  "https://placehold.co/300x450?text=Image+Error")
+                              }
+                            />
+                          }
+                          onClick={() => handleOpenDetail(book.bookId)}
+                        >
+                          <Card.Meta
+                            title={
+                              <Text strong style={{ fontSize: "16px" }}>
+                                {book.title}
+                              </Text>
+                            }
+                            description={
+                              <Text type="secondary" style={{ display: 'block' }}>
+                                {book.authorNames?.[0] || book.author || "N/A"}
+                              </Text>
+                            }
+                          />
+                        </Card>
+                      </Badge.Ribbon>
+                    </Col>
+                  ))
+                ) : (
+                  !loading && (
+                    <Col span={24}>
+                      <Empty description="Kệ sách hiện đang trống !" />
+                    </Col>
+                  )
+                )}
+              </Row>
+            </Spin>
+          </div>
+        </Content>
+        <Footer />
 
-        <Grid container spacing={4}>
-          {books.map((book, index) => (
-            <Grid key={index} size={{ xs: 6, sm: 4, md: 3 }}>
-              <Box sx={{ 
-                cursor: 'pointer',
-                transition: '0.3s',
-                '&:hover': { transform: 'translateY(-10px)' }
-              }}>
-                <Paper elevation={6} sx={{ borderRadius: '8px', overflow: 'hidden', border: 'none' }}>
-                  <Box 
-                    component="img" 
-                    src={book.img} 
-                    sx={{ width: '100%', height: 'auto', display: 'block' }} 
-                  />
-                </Paper>
-                <Typography variant="subtitle1" sx={{ mt: 2, fontWeight: 700, color: '#444', textAlign: 'center' }}>
-                  {book.title}
-                </Typography>
-              </Box>
-            </Grid>
-          ))}
-        </Grid>
-      </Container>
-    </Box>
-    <Footer />
-    </>
+        <BookDetailModal
+          open={isModalOpen}
+          bookId={selectedBookId}
+          onCancel={() => {
+            setIsModalOpen(false);
+            setSelectedBookId(null);
+          }}
+        />
+      </Layout>
+    </ConfigProvider>
   );
 };
 
