@@ -12,7 +12,7 @@ import LoginPage from "./pages/login";
 import HomePage from "./pages/home";
 import Unauthorized from "./pages/error/Unauthorized";
 import AccountManager from "./pages/Admin/AccountManager"; 
-// import ResetPasswordPage from "./pages/auth/ResetPassword";       chưa dùng đến nên tạm ẩn
+import ResetPasswordPage from "./pages/auth/ResetPassword"; 
 import ProfilePage from "./pages/users/Profile";
 import OverviewPage from "./pages/Admin/Overview/index";
 import ChangePasswordPage from "./pages/users/ChangePasswordPage";
@@ -24,6 +24,7 @@ import MyTickets from "./pages/users/MyTickets";
 import TicketManager from "./pages/Staff/TicketManager";
 import ActiveLoans from "./pages/Staff/ActiveLoans";
 import StaffOverview from "./pages/Staff/Overview/Overview";
+import ForgotPassword from "./pages/auth/ForgotPassword";
 
 
 const router = createBrowserRouter([
@@ -31,7 +32,8 @@ const router = createBrowserRouter([
   { path: "/", element: <HomePage /> },
   { path: "/login", element: <LoginPage /> },
   { path: "/unauthorized", element: <Unauthorized /> },
-
+  { path: "/reset-password", element: <ResetPasswordPage /> },
+  { path: "/forgot-password", element: <ForgotPassword /> },
   // --- Common Authenticated Routes ---
   {
     element: <ProtectedRoute allowedRoles={["ADMIN", "STAFF", "STUDENT", "LECTURER"]} />,
@@ -67,15 +69,10 @@ const router = createBrowserRouter([
         path: "/staff",
         element: <StaffLayout />,
         children: [
-          // Mặc định vào Staff sẽ hiện Overview
           { index: true, element: <Navigate to="overview" replace /> },
           { path: "overview", element: <StaffOverview />               },
           { path: "master-data", element: <MasterDataPage /> },
-
-          // Quản lý sách
           { path: "manage-books", element: <BookManagement /> },
-
-          // Giao dịch (Mượn/Trả)
           { path: "active-loans", element: <ActiveLoans /> },
           { path: "ticket-requests", element: <TicketManager /> },
         ],

@@ -27,29 +27,28 @@ export const authService = {
     }
   },
 
-  // 3. Yêu cầu Reset Password
-  requestResetPassword: async (input: string) => {
-    try {
-      const res = await api.post("/auth/reset-password/request", { input });
-      toast.success("Yêu cầu đã được gửi!");
-      return res.data;
-    } catch (error: any) {
-      const message = error.response?.data?.message || "Lỗi gửi yêu cầu";
-      toast.error(message);
-      throw error;
-    }
-  },
+// 3. Gửi yêu cầu đặt lại mật khẩu 
+requestResetPassword: async (input: string) => {
+  try {
+    const res = await api.post("/auth/reset-password/request", { input });
+    console.log(">>> Request Reset Password Success");
+    return res.data;
+  } catch (error: any) {
+    console.error(">>> Request Reset Error:", error.response?.data);
+    throw error;
+  }
+},
 
-  // 4. Đặt lại mật khẩu mới
-  resetPassword: async (resetToken: string, payload: any) => {
-    try {
-      const res = await api.put(`/auth/reset-password?resetToken=${resetToken}`, payload);
-      toast.success("Đặt lại mật khẩu thành công!");
-      return res.data;
-    } catch (error: any) {
-      const message = error.response?.data?.message || "Lỗi đặt lại mật khẩu";
-      toast.error(message);
-      throw error;
-    }
-  },
+// 4. Thực hiện đặt lại mật khẩu mới 
+resetPassword: async (resetToken: string, payload: any) => {
+  try {
+    const res = await api.put("/auth/reset-password", payload, {
+      params: { resetToken } 
+    });
+    return res.data;
+  } catch (error: any) {
+    console.error(">>> Reset Password Error:", error.response?.data);
+    throw error;
+  }
+},
 };

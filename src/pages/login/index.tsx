@@ -43,16 +43,11 @@ const LoginPage: React.FC = () => {
       if (!token) {
         throw new Error("Không nhận được Token từ server!");
       }
-
-      // 2. Giải mã JWT
-      const decoded: any = jwtDecode(token);
-      
+      const decoded: any = jwtDecode(token);    
       const user = {
         id: decoded.sub,
         role: decoded.scope || "USER", 
       };
-
-      // 3. Lưu vào Context & LocalStorage 
       login(user, token); 
 
       toast.success(`Chào mừng quay trở lại, ${user.role}!`);
@@ -123,7 +118,6 @@ const LoginPage: React.FC = () => {
                 <Form.Item name="remember" valuePropName="checked" noStyle>
                   <Checkbox>Ghi nhớ tôi</Checkbox>
                 </Form.Item>
-                {/* Nên có link quên mật khẩu ở đây  */}
                 <Link to="/forgot-password" style={{ color: "#1890ff" }}>Quên mật khẩu?</Link>
               </div>
             </Form.Item>
