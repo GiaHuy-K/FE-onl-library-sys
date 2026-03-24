@@ -54,21 +54,24 @@ function BookManagement() {
   }, []);
 
   // HÀM TOGGLE TRẠNG THÁI (THAY CHO DELETE)
-  const handleToggleStatus = async (record: any) => {
-    const newStatus = record.status === "ACTIVE" ? "INACTIVE" : "ACTIVE";
-    try {
-      // Gọi service update status
-      await bookService.updateBook(record.bookId, {
-        ...record,
-        status: newStatus,
-      });
-      
-      message.success(`Đã ${newStatus === "ACTIVE" ? "kích hoạt" : "khóa"} sách thành công!`);
-      fetchBooks(); // Load lại danh sách
-    } catch (error) {
-      message.error("Không thể cập nhật trạng thái sách!");
-    }
+const handleToggleStatus = async (record: any) => {
+  const newStatus = record.status === "ACTIVE" ? "INACTIVE" : "ACTIVE";
+  const updateData = {
+    status: newStatus
   };
+
+  try {
+    setLoading(true);
+    await bookService.updateBook(record.bookId, updateData);
+    message.success(`Đã ${newStatus === "ACTIVE" ? "kích hoạt" : "khóa"} sách thành công!`);
+    fetchBooks(); 
+  } catch (error) {
+    console.error("Lỗi cập nhật:", error);
+    message.error("Không thể cập nhật trạng thái sách!");
+  } finally {
+    setLoading(false);
+  }
+};
 
   const handleImportCSV = async (file: File) => {
     setLoading(true);

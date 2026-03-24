@@ -14,8 +14,8 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
       message.warning("Cuốn này có trong danh sách rồi nè!");
       return;
     }
-    if (cart.length >= 3) {
-      message.error("Tối đa 3 cuốn thôi anh Huy ơi!");
+    if (cart.length >= 7) {
+      message.error("Tối đa 7 cuốn thôi  Bạn ơi!");
       return;
     }
     setCart([...cart, book]);
