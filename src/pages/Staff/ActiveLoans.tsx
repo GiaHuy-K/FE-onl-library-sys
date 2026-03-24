@@ -1,12 +1,13 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useState } from 'react';
-import { Table, Tag, Typography, Card, Space, message, Button, Popconfirm } from 'antd';
+import { Table, Tag, Typography, Card, Space, message, Button, Modal, Input, Popconfirm } from 'antd';
 import { 
   ExclamationCircleOutlined, 
   BookOutlined, 
   ExportOutlined, 
-  CheckCircleOutlined 
+  CheckCircleOutlined,
+  CloseCircleOutlined
 } from '@ant-design/icons';
 import { bookService } from '../../services/book.service';
 import dayjs from 'dayjs';
@@ -36,7 +37,6 @@ const ActiveLoans = () => {
     fetchActiveLoans();
   }, []);
 
-
   const handleCheckout = async (ticketId: number) => {
     try {
       await bookService.checkoutBook(ticketId);
@@ -53,6 +53,41 @@ const ActiveLoans = () => {
     } catch (error) {
       console.error("Return error");
     }
+  };
+
+  // --- HÀM HỦY ĐƠN VỚI LÝ DO ---
+  const handleCancel = (record: any) => {
+    let reason = ""; 
+
+    Modal.confirm({
+      title: `Xác nhận hủy phiếu mượn #T-${record.ticketId}`,
+      icon: <ExclamationCircleOutlined style={{ color: '#ff4d4f' }} />,
+      content: (
+        <div style={{ marginTop: 16 }}>
+          <Text strong>Lý do hủy đơn:</Text>
+          <Input 
+            placeholder="Nhập lý do (ví dụ: SV không đến nhận sách quá hạn...)" 
+            onChange={(e) => { reason = e.target.value; }}
+            style={{ marginTop: 8 }}
+          />
+        </div>
+      ),
+      okText: 'Xác nhận Hủy',
+      okType: 'danger',
+      cancelText: 'Quay lại',
+      onOk: async () => {
+        if (!reason.trim()) {
+          message.warning("Phải nhập lý do thì mới hủy được !");
+          return Promise.reject(); 
+        }
+        try {
+          await bookService.cancelBorrowRequest(record, reason); 
+          fetchActiveLoans();
+        } catch (error) {
+          console.error("Cancel error");
+        }
+      },
+    });
   };
 
   const columns = [
@@ -101,9 +136,10 @@ const ActiveLoans = () => {
     {
       title: 'Thao tác nghiệp vụ',
       key: 'actions',
-      width: 320,
+      width: 400, 
       render: (_: any, record: any) => (
         <Space size="middle">
+          {/* NÚT XUẤT KHO */}
           <Button 
             type="primary" 
             size="small"
@@ -119,6 +155,7 @@ const ActiveLoans = () => {
             Xuất kho
           </Button>
 
+          {/* NÚT THU HỒI */}
           <Popconfirm
             title="Xác nhận sinh viên đã trả sách?"
             onConfirm={() => handleReturn(record.ticketId)}
@@ -138,6 +175,19 @@ const ActiveLoans = () => {
               Thu hồi
             </Button>
           </Popconfirm>
+
+          {/* NÚT HỦY ĐƠN  */}
+          <Button 
+            danger
+            size="small"
+            icon={<CloseCircleOutlined />}
+            onClick={() => handleCancel(record)} 
+            style={{ 
+              display: record.status === 'APPROVED' ? 'inline-flex' : 'none' 
+            }}
+          >
+            Hủy đơn
+          </Button>
         </Space>
       ),
     },

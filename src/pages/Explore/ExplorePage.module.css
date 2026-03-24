@@ -1,0 +1,150 @@
+.mainWrapper {
+  min-height: 100vh;
+  background-color: #f9f9f9;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+.exploreSection {
+  padding: 50px 8% !important;
+}
+
+.outerLayout {
+  background: transparent !important;
+}
+
+.filterSider {
+  background: #fff !important;
+  border-radius: 16px;
+  padding: 24px !important;
+  box-shadow: 0 6px 16px rgba(0,0,0,0.04);
+  height: fit-content;
+  position: sticky; 
+  top: 100px; 
+}
+
+.filterTitle {
+  color: #333 !important;
+  font-weight: 700 !important;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.filterHeaderIcon {
+  color: #FF6E61;
+  font-size: 18px;
+}
+
+.filterItemLabel {
+  color: #555 !important;
+  font-weight: 600 !important;
+  text-transform: uppercase;
+  font-size: 13px;
+  letter-spacing: 0.5px;
+}
+
+.checkboxGroup {
+  width: 100%;
+}
+
+.checkboxItem {
+  width: 100%;
+  margin-left: 0 !important; 
+  color: #333 !important;
+  transition: all 0.2s;
+}
+
+.checkboxItem:hover {
+  color: #FF6E61 !important;
+}
+
+:global(.ant-checkbox-wrapper-checked) .checkboxItem {
+    font-weight: 500;
+}
+
+.listContent {
+  padding-left: 50px !important;
+}
+
+.resultInfoBar {
+  background: transparent;
+  padding: 0 0 24px 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #eaeaea;
+  margin-bottom: 30px;
+}
+
+.resultCount {
+  color: #666 !important;
+  font-size: 15px;
+}
+
+.activeTags {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+:global(.ant-tag) {
+  border-radius: 15px;
+  padding: 2px 12px;
+  border: 1px solid #ffe7e0;
+  font-size: 12px;
+}
+
+.bookCard {
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid #eaeaea;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  background: #fff;
+}
+
+.bookCard:hover {
+  box-shadow: 0 10px 25px rgba(255, 110, 97, 0.12);
+  transform: translateY(-5px);
+  border-color: rgba(255, 110, 97, 0.2);
+}
+
+.bookCardCover {
+  height: 280px;
+  object-fit: cover;
+  border-bottom: 1px solid #eaeaea;
+}
+
+.cardMetaTitle {
+  font-weight: 600 !important;
+  color: #222 !important;
+  font-size: 15px !important;
+  margin-top: 8px;
+}
+
+.cardMetaDesc {
+  color: #777 !important;
+  font-size: 13px !important;
+}
+
+.floatingCartContainer {
+  position: fixed;
+  bottom: 120px;
+  right: 30px;
+  z-index: 1000;
+  transition: all 0.3s ease;
+}
+
+.floatingCartBtn {
+  width: 56px !important;
+  height: 56px !important;
+  box-shadow: 0 4px 15px rgba(255, 110, 97, 0.4) !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  border: none !important;
+}
+
+.floatingCartBtn:hover {
+  transform: scale(1.1);
+  background-color: #ff857a !important;
+}

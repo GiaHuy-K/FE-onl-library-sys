@@ -1,9 +1,11 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { createBrowserRouter, RouterProvider, Navigate } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 // Auth & Context
 import { AuthProvider } from "./config/Authcontext";
+import { CartProvider } from "./components/context/CartContext";
 import ProtectedRoute from "./routes/ProtectedRoute"; 
 
 // Layouts & Pages
@@ -25,12 +27,13 @@ import TicketManager from "./pages/Staff/TicketManager";
 import ActiveLoans from "./pages/Staff/ActiveLoans";
 import StaffOverview from "./pages/Staff/Overview/Overview";
 import ForgotPassword from "./pages/auth/ForgotPassword";
-
+import ExplorePage from "./pages/Explore/ExplorePage";
 
 const router = createBrowserRouter([
   // --- Public Routes  ---
   { path: "/", element: <HomePage /> },
   { path: "/login", element: <LoginPage /> },
+  { path: "/explore", element: <ExplorePage /> },
   { path: "/unauthorized", element: <Unauthorized /> },
   { path: "/reset-password", element: <ResetPasswordPage /> },
   { path: "/forgot-password", element: <ForgotPassword /> },
@@ -61,7 +64,7 @@ const router = createBrowserRouter([
     ],
   },
 
-// --- Dashboard cho STAFF ---
+  // --- Dashboard cho STAFF ---
   {
     element: <ProtectedRoute allowedRoles={["STAFF"]} />,
     children: [
@@ -70,7 +73,7 @@ const router = createBrowserRouter([
         element: <StaffLayout />,
         children: [
           { index: true, element: <Navigate to="overview" replace /> },
-          { path: "overview", element: <StaffOverview />               },
+          { path: "overview", element: <StaffOverview /> },
           { path: "master-data", element: <MasterDataPage /> },
           { path: "manage-books", element: <BookManagement /> },
           { path: "active-loans", element: <ActiveLoans /> },
@@ -87,9 +90,11 @@ const router = createBrowserRouter([
 export default function App() {
   return (
     <AuthProvider>
-      <RouterProvider router={router} />
-      <ChatAIWidget />
-      <ToastContainer position="top-right" autoClose={3000} />
+      <CartProvider>
+        <RouterProvider router={router} />
+        <ChatAIWidget />
+        <ToastContainer position="top-right" autoClose={3000} />
+      </CartProvider>
     </AuthProvider>
   );
 }

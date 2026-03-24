@@ -130,11 +130,11 @@ export const bookService = {
 
   // 10. User yêu cầu mượn sách
 
-borrowBook: async (bookId: number | string) => {
+borrowBook: async (bookIds: number[], borrowDate: string) => {
   
   const payload = {
-    bookIds: [Number(bookId)], 
-    borrowDate: new Date().toISOString().split('T')[0] 
+    bookIds: bookIds.map(id => Number(id)),
+    borrowDate: borrowDate || new Date().toISOString().split('T')[0]
   };
 
   console.log(">>> Debug Borrow Payload (Swagger Match):", payload);
@@ -209,4 +209,23 @@ borrowBook: async (bookId: number | string) => {
       throw error;
     }
   },
+  // 16. Hủy yêu cầu mượn (Cancel)
+cancelBorrowRequest: async (record: any, reason: string) => {
+  try {
+    const tId = record.ticketId; 
+    const payload = {
+      ...record,
+      note: reason,     
+    };
+    console.log(">>> Sending Cancel Payload:", payload);
+    const res = await api.put(`/book/borrow/${tId}/cancel`, payload);
+    toast.success("Đã hủy đơn và hoàn sách về kho!");
+    return res.data;
+  } catch (error: any) {
+    console.error(">>> Cancel Borrow Request Error:", error.response?.data || error.message);
+    const serverMsg = error.response?.data?.message || "Lỗi hệ thống khi hủy đơn";
+    toast.error(serverMsg);
+    throw error;
+  }
+},
 };
